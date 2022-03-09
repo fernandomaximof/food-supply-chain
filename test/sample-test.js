@@ -46,24 +46,24 @@ describe("SupplyChain", function () {
     
   });
 
-
+  
   // 1st Test
-  it("Testing smart contract function harvestItem() that allows a farmer to harvest coffee", async() => {
+  it("TESTING SMART CONTRACT FUNCTION harvestItem() THAT ALLOWS A FARMER TO HARVEST COFFEE", async() => {
     // Declare and Initialize a variable for event
     var eventEmitted = false;
 
     // Mark an item as Harvested by calling function harvestItem()
-    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes)
-
-    // Watch the emitted event Harvested()
-    await supplyChain.Harvested(null, (error, event)=>{
-      eventEmitted = true
-    });
-
+    try {
+      await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
+    
     // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferOne = await supplyChain.fetchItemBufferOne(upc);
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
-
+    
     // Verify the result set
     //expect(resultBufferOne[0]).to.equal(sku);
     expect(BigInt(resultBufferOne[1])).to.equal(BigInt(upc));
@@ -77,30 +77,29 @@ describe("SupplyChain", function () {
     expect(eventEmitted).to.equal(true);
   })
 
+
   // 2nd Test
-  // it("Testing smart contract function processItem() that allows a farmer to process coffee", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
+  it("TESTING SMART CONTRACT FUNCTION processItem() THAT ALLOWS A FARMER TO PROCESS COFFEE", async() => {
+    itemState++
     
-  //   itemState++
+    // Declare and Initialize a variable for event
+    var eventEmitted = false
     
-  //   // Declare and Initialize a variable for event
-  //   var eventEmitted = false
+    // Mark an item as Processed by calling function processItem()
+    try {
+      await supplyChain.processItem(upc);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
     
-  //   // Watch the emitted event Processed()
-  //   await supplyChain.Processed(null, (error, event)=>{    
-  //       eventEmitted = true
-  //   })
+    // Retrieve the just now saved item from blockchain by calling function fetchItem()
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
+    
+    // Verify the result set
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(1))
+  })
 
-  //   // Mark an item as Processed by calling function processItem()
-  //   await supplyChain.processItem(upc)
-
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
-
-  //   // Verify the result set
-  //   expect(resultBufferTwo[5], 1, 'Error: Invalid item State')
-  // })
 
   // // 3rd Test
   // it("Testing smart contract function packItem() that allows a farmer to pack coffee", async() => {
