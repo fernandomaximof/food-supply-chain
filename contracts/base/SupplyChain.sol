@@ -294,14 +294,14 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole,
   // Define a function 'fetchItemBufferOne' that fetches the data
   function fetchItemBufferOne(uint _upc) public view returns 
   (
-  uint    itemSKU,
-  uint    itemUPC,
-  address ownerID,
-  address originFarmerID,
-  string  memory originFarmName,
-  string  memory originFarmInformation,
-  string  memory originFarmLatitude,
-  string  memory originFarmLongitude
+    uint    itemSKU,
+    uint    itemUPC,
+    address ownerID,
+    address originFarmerID,
+    string  memory originFarmName,
+    string  memory originFarmInformation,
+    string  memory originFarmLatitude,
+    string  memory originFarmLongitude
   ) 
   {
   // Assign values to the 8 parameters
