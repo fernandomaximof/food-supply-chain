@@ -41,8 +41,7 @@ describe("SupplyChain", function () {
     await RetailerRole.deploy();
     await ConsumerRole.deploy();
     supplyChain = await SupplyChain.deploy();
-    
-    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.deployed()
     
   });
 
@@ -81,12 +80,12 @@ describe("SupplyChain", function () {
 
   // 2nd Test
   it("TESTING SMART CONTRACT FUNCTION processItem() THAT ALLOWS A FARMER TO PROCESS COFFEE", async() => {
-    itemState++;
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
     
-    // Declare and Initialize a variable for event
+    itemState++;
+
     var eventEmitted = false;
     
-    // Mark an item as Processed by calling function processItem()
     try {
       await supplyChain.processItem(upc);
       eventEmitted = true;
@@ -94,23 +93,22 @@ describe("SupplyChain", function () {
       console.log(e);
     }
     
-    // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
     
-    // Verify the result set
     expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(itemState));
   
   })
 
 
-  // // 3rd Test
+  // 3rd Test
   it("TESTING SMART CONTRACT FUNCTION packItem() THAT ALLOWS A FARMER TO PACK COFFEE", async() => {
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+
     itemState++;
     
-    // Declare and Initialize a variable for event
     var eventEmitted = false;
     
-    // Mark an item as Packed by calling function packItem()
     try {
       await supplyChain.packItem(upc);
       eventEmitted = true;
@@ -118,41 +116,38 @@ describe("SupplyChain", function () {
       console.log(e);
     }
 
-    // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
 
-    // Verify the result set
     expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(itemState));
   
   })
 
-  // // 4th Test
-  // it("Testing smart contract function sellItem() that allows a farmer to sell coffee", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
+  
+  // 4th Test
+  it("Testing smart contract function sellItem() that allows a farmer to sell coffee", async() => {
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+    await supplyChain.packItem(upc);
     
-  //   itemState++
+    itemState++
     
-  //   // Declare and Initialize a variable for event
-  //   var eventEmitted = false
+    var eventEmitted = false
     
-  //   // Watch the emitted event ForSale()
-  //   await supplyChain.ForSale(null, (error, event)=>{    
-  //       eventEmitted = true
-  //   })
+    try {
+      await supplyChain.sellItem(upc, productPrice);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
 
-  //   // Mark an item as ForSale by calling function sellItem()
-  //   await supplyChain.sellItem(upc, productPrice)
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
 
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
+    expect(parseInt(resultBufferTwo[4])).to.be.above(parseInt(0));
+    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(3));
 
-  //   // Verify the result set
-  //   assert.ok(resultBufferTwo[4] > 0, 'Error: Price is less than 0')
-  //   expect(resultBufferTwo[5], 3, 'Error: Invalid item State')
-  // })
+  })
 
-  // // 5th Test
+  // 5th Test
   // it("Testing smart contract function buyItem() that allows a distributor to buy coffee", async() => {
   //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
   //   const supplyChain = await SupplyChain.deploy();

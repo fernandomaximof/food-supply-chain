@@ -314,31 +314,30 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole,
     originFarmLatitude = items[_upc].originFarmLatitude;
     originFarmLongitude = items[_upc].originFarmLongitude;
     
-    return 
-    (
-    itemSKU,
-    itemUPC,
-    ownerID,
-    originFarmerID,
-    originFarmName,
-    originFarmInformation,
-    originFarmLatitude,
-    originFarmLongitude
+    return(
+      itemSKU,
+      itemUPC,
+      ownerID,
+      originFarmerID,
+      originFarmName,
+      originFarmInformation,
+      originFarmLatitude,
+      originFarmLongitude
     );
   }
 
   // Define a function 'fetchItemBufferTwo' that fetches the data
   function fetchItemBufferTwo(uint _upc) public view returns 
   (
-  uint    itemSKU,
-  uint    itemUPC,
-  uint    productID,
-  string memory productNotes,
-  uint    productPrice,
-  uint    itemState,
-  address distributorID,
-  address retailerID,
-  address consumerID
+    uint    itemSKU,
+    uint    itemUPC,
+    uint    productID,
+    string memory productNotes,
+    uint    productPrice,
+    uint    itemState,
+    address distributorID,
+    address retailerID,
+    address consumerID
   ) 
   {
     // Assign values to the 9 parameters
@@ -352,17 +351,16 @@ contract SupplyChain is FarmerRole, DistributorRole, RetailerRole, ConsumerRole,
     retailerID = items[_upc].retailerID;
     consumerID = items[_upc].consumerID;
     
-    return
-    (
-    itemSKU,
-    itemUPC,
-    productID,
-    productNotes,
-    productPrice,
-    itemState,
-    distributorID,
-    retailerID,
-    consumerID
+    return(
+      itemSKU,
+      itemUPC,
+      productID,
+      productNotes,
+      productPrice,
+      itemState,
+      distributorID,
+      retailerID,
+      consumerID
     );
   }
 }
