@@ -7,13 +7,12 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-web3");
 require("./scripts/deploy.js");
-require("./scripts/mint.js");
 
 const { ALCHEMY_KEY, ACCOUNT_PRIVATE_KEY,  ETHERSCAN_API_KEY } = process.env;
 
 module.exports = {
    solidity: "0.8.0",
-   defaultNetwork: "rinkeby",
+   defaultNetwork: "hardhat",//"rinkeby",
    networks: {
     hardhat: {},
     rinkeby: {
