@@ -46,7 +46,7 @@ describe("SupplyChain", function () {
     
   });
 
-  
+
   // 1st Test
   it("TESTING SMART CONTRACT FUNCTION harvestItem() THAT ALLOWS A FARMER TO HARVEST COFFEE", async() => {
     // Declare and Initialize a variable for event
@@ -73,17 +73,18 @@ describe("SupplyChain", function () {
     expect(resultBufferOne[5]).to.equal(originFarmInformation);
     expect(resultBufferOne[6]).to.equal(originFarmLatitude);
     expect(resultBufferOne[7]).to.equal(originFarmLongitude);
-    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(0));
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(itemState));
     expect(eventEmitted).to.equal(true);
+  
   })
 
 
   // 2nd Test
   it("TESTING SMART CONTRACT FUNCTION processItem() THAT ALLOWS A FARMER TO PROCESS COFFEE", async() => {
-    itemState++
+    itemState++;
     
     // Declare and Initialize a variable for event
-    var eventEmitted = false
+    var eventEmitted = false;
     
     // Mark an item as Processed by calling function processItem()
     try {
@@ -94,37 +95,36 @@ describe("SupplyChain", function () {
     }
     
     // Retrieve the just now saved item from blockchain by calling function fetchItem()
-    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
     
     // Verify the result set
-    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(1))
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(itemState));
+  
   })
 
 
   // // 3rd Test
-  // it("Testing smart contract function packItem() that allows a farmer to pack coffee", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
+  it("TESTING SMART CONTRACT FUNCTION packItem() THAT ALLOWS A FARMER TO PACK COFFEE", async() => {
+    itemState++;
     
-  //   itemState++
+    // Declare and Initialize a variable for event
+    var eventEmitted = false;
     
-  //   // Declare and Initialize a variable for event
-  //   var eventEmitted = false
-    
-  //   // Watch the emitted event Packed()
-  //   await supplyChain.Packed(null, (error, event)=>{    
-  //       eventEmitted = true
-  //   })
+    // Mark an item as Packed by calling function packItem()
+    try {
+      await supplyChain.packItem(upc);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
 
-  //   // Mark an item as Packed by calling function packItem()
-  //   await supplyChain.packItem(upc)
+    // Retrieve the just now saved item from blockchain by calling function fetchItem()
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
 
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
-
-  //   // Verify the result set
-  //   expect(resultBufferTwo[5], 2, 'Error: Invalid item State')
-  // })
+    // Verify the result set
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(itemState));
+  
+  })
 
   // // 4th Test
   // it("Testing smart contract function sellItem() that allows a farmer to sell coffee", async() => {
