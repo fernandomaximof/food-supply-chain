@@ -64,7 +64,7 @@ describe("SupplyChain", function () {
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
     
     // Verify the result set
-    //expect(resultBufferOne[0]).to.equal(sku);
+    expect(BigInt(resultBufferOne[0])).to.equal(BigInt(sku));
     expect(BigInt(resultBufferOne[1])).to.equal(BigInt(upc));
     expect(resultBufferOne[2]).to.equal(ownerID);
     expect(resultBufferOne[3]).to.equal(originFarmerID);
@@ -302,47 +302,61 @@ describe("SupplyChain", function () {
     expect(resultBufferTwo[8]).to.be.equal(consumerID); 
 
   })
+
+
+  // 9th Test
+  it("TESTING SMART CONTRACT FUNCTION fetchItemBufferOne() THAT ALLOWS ANYONE TO FETCH ITEM DETAILS FROM BLOCKCHAIN", async() => {
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+    await supplyChain.packItem(upc);
+    await supplyChain.sellItem(upc, productPrice);
+    
+    [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+
+    try {
+      await supplyChain.addDistributor(distributorID);
+      await supplyChain.connect(addr2).buyItem(upc, {value: productPrice});
+      await supplyChain.connect(addr2).shipItem(upc);
+      await supplyChain.addRetailer(retailerID);
+      await supplyChain.connect(addr3).receiveItem(upc, {value: productPrice});
+      await supplyChain.addConsumer(consumerID);
+      await supplyChain.connect(addr4).purchaseItem(upc, {value: productPrice})
+    } catch(e) {
+      console.log(e);
+    }
+    
+    const resultBufferOne = await supplyChain.fetchItemBufferOne(upc)
+
+    expect(BigInt(resultBufferOne[0])).to.equal(BigInt(sku));
+    expect(BigInt(resultBufferOne[1])).to.equal(BigInt(upc));
+    expect(resultBufferOne[2]).to.equal(consumerID);
+    expect(resultBufferOne[3]).to.equal(originFarmerID);
+    expect(resultBufferOne[4]).to.equal(originFarmName);
+    expect(resultBufferOne[5]).to.equal(originFarmInformation);
+    expect(resultBufferOne[6]).to.equal(originFarmLatitude);
+    expect(resultBufferOne[7]).to.equal(originFarmLongitude);
   
+  })
 
-  // // 9th Test
-  // it("Testing smart contract function fetchItemBufferOne() that allows anyone to fetch item details from blockchain", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
+  // 10th Test
+  it("TESTING SMART CONTRACT FUNCTION fetchItemBufferTwo() THAT ALLOWS ANYONE TO FETCH ITEM DETAILS FROM BLOCKCHAIN", async() => {
+    const SupplyChain = await ethers.getContractFactory("SupplyChain");
+    const supplyChain = await SupplyChain.deploy();
     
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
-  //   //console.log(resultBufferOne)
-    
-  //   // Verify the result set:
-  //   expect(resultBufferOne[0], sku, 'Error: Invalid item SKU')
-  //   expect(resultBufferOne[1], upc, 'Error: Invalid item UPC')
-  //   expect(resultBufferOne[2], consumerID, 'Error: Missing or Invalid ownerID')
-  //   expect(resultBufferOne[3], originFarmerID, 'Error: Missing or Invalid originFarmerID')
-  //   expect(resultBufferOne[4], originFarmName, 'Error: Missing or Invalid originFarmName')
-  //   expect(resultBufferOne[5], originFarmInformation, 'Error: Missing or Invalid originFarmInformation')
-  //   expect(resultBufferOne[6], originFarmLatitude, 'Error: Missing or Invalid originFarmLatitude')
-  //   expect(resultBufferOne[7], originFarmLongitude, 'Error: Missing or Invalid originFarmLongitude')
-  // })
+    // Retrieve the just now saved item from blockchain by calling function fetchItem()
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
+    //console.log(resultBufferTwo)
 
-  // // 10th Test
-  // it("Testing smart contract function fetchItemBufferTwo() that allows anyone to fetch item details from blockchain", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
-    
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
-  //   //console.log(resultBufferTwo)
-
-  //   // Verify the result set:
-  //   expect(resultBufferTwo[0], sku, 'Error: Invalid item SKU')
-  //   expect(resultBufferTwo[1], upc, 'Error: Invalid item UPC')
-  //   expect(resultBufferTwo[2], productID, 'Error: Missing or Invalid productID')
-  //   expect(resultBufferTwo[3], productNotes, 'Error: Missing or Invalid productNotes')
-  //   expect(resultBufferTwo[4], productPrice, 'Error: Missing or Invalid productPrice')
-  //   expect(resultBufferTwo[5], 7, 'Error: Missing or Invalid itemState')
-  //   expect(resultBufferTwo[6], distributorID, 'Error: Missing or Invalid distributorID')
-  //   expect(resultBufferTwo[7], retailerID, 'Error: Missing or Invalid retailerID')
-  //   expect(resultBufferTwo[8], consumerID, 'Error: Missing or Invalid consumerID')
-  // })
+    // Verify the result set:
+    expect(resultBufferTwo[0], sku, 'Error: Invalid item SKU')
+    expect(resultBufferTwo[1], upc, 'Error: Invalid item UPC')
+    expect(resultBufferTwo[2], productID, 'Error: Missing or Invalid productID')
+    expect(resultBufferTwo[3], productNotes, 'Error: Missing or Invalid productNotes')
+    expect(resultBufferTwo[4], productPrice, 'Error: Missing or Invalid productPrice')
+    expect(resultBufferTwo[5], 7, 'Error: Missing or Invalid itemState')
+    expect(resultBufferTwo[6], distributorID, 'Error: Missing or Invalid distributorID')
+    expect(resultBufferTwo[7], retailerID, 'Error: Missing or Invalid retailerID')
+    expect(resultBufferTwo[8], consumerID, 'Error: Missing or Invalid consumerID')
+  })
   /**/
 });
