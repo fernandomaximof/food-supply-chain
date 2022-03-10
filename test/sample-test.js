@@ -158,24 +158,27 @@ describe("SupplyChain", function () {
 
     var eventEmitted = false;
 
+    [owner, addr1, addr2] = await ethers.getSigners();
+
     try {
       await supplyChain.addDistributor(distributorID);
-      eventEmitted = true;
     } catch(e) {
-      console.log(await supplyChain.isDistributor(ownerID))
       console.log(e);
     }
 
-    // try {
-    //   await supplyChain.connect(distributorID).buyItem(upc, ethers.utils.parseEther("1"));
-    // } catch(e) {
-    //   //console.log(e);
-    // }
+    // console.log(await supplyChain.isDistributor(distributorID))
 
-    // const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
+    try {
+      await supplyChain.connect(addr2).buyItem(upc, {value: productPrice});
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
 
-    // expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(4));
-    // expect(resultBufferTwo[6]).to.be.equal(distributorID);
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
+
+    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(4));
+    expect(resultBufferTwo[6]).to.be.equal(distributorID);
 
   })
 
