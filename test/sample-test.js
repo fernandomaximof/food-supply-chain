@@ -8,14 +8,14 @@ describe("SupplyChain", function () {
   var upc = 1;
   var ownerID;
   var originFarmerID;
-  const originFarmName = "John Doe"
-  const originFarmInformation = "Yarray Valley"
-  const originFarmLatitude = "-38.239770"
-  const originFarmLongitude = "144.341490"
-  var productID = sku + upc
-  const productNotes = "Best beans for Espresso"
-  const productPrice = web3.utils.toWei("1", "ether")
-  var itemState = 0
+  const originFarmName = "John Doe";
+  const originFarmInformation = "Yarray Valley";
+  const originFarmLatitude = "-38.239770";
+  const originFarmLongitude = "144.341490";
+  var productID = sku + upc;
+  const productNotes = "Best beans for Espresso";
+  const productPrice = web3.utils.toWei("1", "ether");
+  var itemState = 0;
   var distributorID;
   var retailerID;
   var consumerID;
@@ -124,7 +124,7 @@ describe("SupplyChain", function () {
 
   
   // 4th Test
-  it("Testing smart contract function sellItem() that allows a farmer to sell coffee", async() => {
+  it("TESTING SMART CONTRACT FUNCTION sellItem() THAT ALLOWS A FARMER TO SELL COFFEE", async() => {
     await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
     await supplyChain.processItem(upc);
     await supplyChain.packItem(upc);
@@ -148,36 +148,36 @@ describe("SupplyChain", function () {
   })
 
   // 5th Test
-  // it("Testing smart contract function buyItem() that allows a distributor to buy coffee", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
-    
-  //   itemState++
+  it("TESTING SMART CONTRACT FUNCTION buyItem() THAT ALLOWS A DISTRIBUTOR TO BUY COFFEE", async() => {
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+    await supplyChain.packItem(upc);
+    await supplyChain.sellItem(upc, productPrice);
 
-  //   await supplyChain.addDistributor(distributorID)
+    itemState++;
 
-  //   // Declare and Initialize a variable for event
-  //   var eventEmitted = false
-    
-  //   // Watch the emitted event Sold()
-  //   await supplyChain.Sold(null, (error, event)=>{    
-  //       eventEmitted = true
-  //   })
+    var eventEmitted = false;
 
-  //   // console.log(await supplyChain.isDistributor(distributorID))
-  //   // console.log(await supplyChain.checkDistributor({from: distributorID}))
+    try {
+      await supplyChain.addDistributor(distributorID);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(await supplyChain.isDistributor(ownerID))
+      console.log(e);
+    }
 
-  //   // Mark an item as Sold by calling function buyItem()
-  //   await supplyChain.buyItem(upc, {from: distributorID, value: productPrice})
-    
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
-  //   console.log(resultBufferTwo[6])
+    // try {
+    //   await supplyChain.connect(distributorID).buyItem(upc, ethers.utils.parseEther("1"));
+    // } catch(e) {
+    //   //console.log(e);
+    // }
 
-  //   // Verify the result set
-  //   expect(resultBufferTwo[5], 4, 'Error: Invalid item State')
-  //   expect(resultBufferTwo[6], distributorID, 'Error: Missing or Invalid distributorID')
-  // })
+    // const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
+
+    // expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(4));
+    // expect(resultBufferTwo[6]).to.be.equal(distributorID);
+
+  })
 
   // // 6th Test
   // it("Testing smart contract function shipItem() that allows a distributor to ship coffee", async() => {
