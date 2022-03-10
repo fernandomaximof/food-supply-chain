@@ -182,32 +182,39 @@ describe("SupplyChain", function () {
 
   })
 
-  // // 6th Test
-  // it("Testing smart contract function shipItem() that allows a distributor to ship coffee", async() => {
-  //   const SupplyChain = await ethers.getContractFactory("SupplyChain");
-  //   const supplyChain = await SupplyChain.deploy();
+  // 6th Test
+  it("Testing smart contract function shipItem() that allows a distributor to ship coffee", async() => {
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+    await supplyChain.packItem(upc);
+    await supplyChain.sellItem(upc, productPrice);
     
-  //   itemState++
+    [owner, addr1, addr2] = await ethers.getSigners();
 
-  //   // Declare and Initialize a variable for event
-  //   var eventEmitted = false
+    try {
+      await supplyChain.addDistributor(distributorID);
+      await supplyChain.connect(addr2).buyItem(upc, {value: productPrice});
+    } catch(e) {
+      console.log(e);
+    }
+
+    itemState++;
+
+    var eventEmitted = false;
     
-  //   // Watch the emitted event Shipped()
-  //   await supplyChain.Shipped(null, (error, event)=>{    
-  //       eventEmitted = true
-  //   })
+    try {
+      await supplyChain.connect(addr2).shipItem(upc);
+      eventEmitted = true;
+    } catch(e) {
+      console.log(e);
+    }
 
-  //   // Mark an item as Shipped by calling function shipItem()
-  //   await supplyChain.shipItem(upc, {from: distributorID})
+    const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
 
-  //   // Retrieve the just now saved item from blockchain by calling function fetchItem()
-  //   const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
-  //   console.log(resultBufferTwo[6])
-
-  //   // Verify the result set
-  //   expect(resultBufferTwo[5], 5, 'Error: Invalid item State')
-  //   expect(resultBufferTwo[6], distributorID, 'Error: Missing or Invalid distributorID')
-  // })
+    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(5));
+    expect(resultBufferTwo[6]).to.be.equal(distributorID);
+  
+  })
 
   // // 7th Test
   // it("Testing smart contract function receiveItem() that allows a retailer to mark coffee received", async() => {
