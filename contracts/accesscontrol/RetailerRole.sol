@@ -30,7 +30,8 @@ contract RetailerRole is AccessControl {
   // Define a function 'addRetailer' that adds this role
   function addRetailer(address account) public onlyRetailer() 
   {
-    grantRole('retailers', account);
+    //grantRole('retailers', account);
+    _setupRole('retailers', account);
     emit RetailerAdded(account);
   }
 

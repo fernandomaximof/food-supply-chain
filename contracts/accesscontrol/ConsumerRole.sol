@@ -30,7 +30,8 @@ contract ConsumerRole is AccessControl {
   // Define a function 'addConsumer' that adds this role
   function addConsumer(address account) public onlyConsumer() 
   {
-    grantRole('consumers', account);
+    //grantRole('consumers', account);
+    _setupRole('consumers', account);
     emit ConsumerAdded(account);
   }
 

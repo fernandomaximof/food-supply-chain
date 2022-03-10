@@ -30,7 +30,8 @@ contract FarmerRole is AccessControl {
   // Define a function 'addFarmer' that adds this role
   function addFarmer(address account) public onlyFarmer() 
   {
-    grantRole('farmers', account);
+    // grantRole('farmers', account);
+    _setupRole('farmers', account);
     emit FarmerAdded(account);
   }
 
