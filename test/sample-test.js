@@ -143,7 +143,7 @@ describe("SupplyChain", function () {
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
 
     expect(parseInt(resultBufferTwo[4])).to.be.above(parseInt(0));
-    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(3));
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(3));
 
   })
 
@@ -178,8 +178,8 @@ describe("SupplyChain", function () {
 
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc);
 
-    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(4));
-    expect(resultBufferTwo[6]).to.be.equal(distributorID);
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(4));
+    expect(resultBufferTwo[6]).to.equal(distributorID);
 
   })
 
@@ -213,8 +213,8 @@ describe("SupplyChain", function () {
 
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
 
-    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(5));
-    expect(resultBufferTwo[6]).to.be.equal(distributorID);
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(5));
+    expect(resultBufferTwo[6]).to.equal(distributorID);
   
   })
 
@@ -254,8 +254,8 @@ describe("SupplyChain", function () {
 
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
     
-    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(6));
-    expect(resultBufferTwo[7]).to.be.equal(retailerID);
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(6));
+    expect(resultBufferTwo[7]).to.equal(retailerID);
 
   })
 
@@ -298,8 +298,8 @@ describe("SupplyChain", function () {
 
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
 
-    expect(BigInt(resultBufferTwo[5])).to.be.equal(BigInt(7));
-    expect(resultBufferTwo[8]).to.be.equal(consumerID); 
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(7));
+    expect(resultBufferTwo[8]).to.equal(consumerID); 
 
   })
 
@@ -340,23 +340,39 @@ describe("SupplyChain", function () {
 
   // 10th Test
   it("TESTING SMART CONTRACT FUNCTION fetchItemBufferTwo() THAT ALLOWS ANYONE TO FETCH ITEM DETAILS FROM BLOCKCHAIN", async() => {
-    const SupplyChain = await ethers.getContractFactory("SupplyChain");
-    const supplyChain = await SupplyChain.deploy();
+    await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+    await supplyChain.processItem(upc);
+    await supplyChain.packItem(upc);
+    await supplyChain.sellItem(upc, productPrice);
+    
+    [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+
+    try {
+      await supplyChain.addDistributor(distributorID);
+      await supplyChain.connect(addr2).buyItem(upc, {value: productPrice});
+      await supplyChain.connect(addr2).shipItem(upc);
+      await supplyChain.addRetailer(retailerID);
+      await supplyChain.connect(addr3).receiveItem(upc, {value: productPrice});
+      await supplyChain.addConsumer(consumerID);
+      await supplyChain.connect(addr4).purchaseItem(upc, {value: productPrice})
+    } catch(e) {
+      console.log(e);
+    }
     
     // Retrieve the just now saved item from blockchain by calling function fetchItem()
     const resultBufferTwo = await supplyChain.fetchItemBufferTwo(upc)
     //console.log(resultBufferTwo)
 
     // Verify the result set:
-    expect(resultBufferTwo[0], sku, 'Error: Invalid item SKU')
-    expect(resultBufferTwo[1], upc, 'Error: Invalid item UPC')
-    expect(resultBufferTwo[2], productID, 'Error: Missing or Invalid productID')
-    expect(resultBufferTwo[3], productNotes, 'Error: Missing or Invalid productNotes')
-    expect(resultBufferTwo[4], productPrice, 'Error: Missing or Invalid productPrice')
-    expect(resultBufferTwo[5], 7, 'Error: Missing or Invalid itemState')
-    expect(resultBufferTwo[6], distributorID, 'Error: Missing or Invalid distributorID')
-    expect(resultBufferTwo[7], retailerID, 'Error: Missing or Invalid retailerID')
-    expect(resultBufferTwo[8], consumerID, 'Error: Missing or Invalid consumerID')
+    expect(BigInt(resultBufferTwo[0])).to.equal(BigInt(sku))
+    expect(BigInt(resultBufferTwo[1])).to.equal(BigInt(upc))
+    expect(BigInt(resultBufferTwo[2])).to.equal(BigInt(productID))
+    expect(resultBufferTwo[3]).to.equal(productNotes)
+    expect(parseInt(resultBufferTwo[4])).to.equal(parseInt(productPrice))
+    expect(BigInt(resultBufferTwo[5])).to.equal(BigInt(7))
+    expect(resultBufferTwo[6]).to.equal(distributorID)
+    expect(resultBufferTwo[7]).to.equal(retailerID)
+    expect(resultBufferTwo[8]).to.equal(consumerID)
   })
   /**/
 });
