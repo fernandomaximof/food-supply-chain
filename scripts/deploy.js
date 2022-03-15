@@ -1,7 +1,7 @@
 const { task } = require("hardhat/config");
 const { getAccount } = require("./helpers");
 
-task("deploy", "DEPLOYS THE NFT.SOL CONTRACT").setAction(async function (taskArguments, hre) {
+task("deploy", "DEPLOYS THE SUPPLY CHAIN CONTRACTS").setAction(async function (taskArguments, hre) {
     const FarmerRole = await hre.ethers.getContractFactory("FarmerRole", getAccount());
     const DistributorRole = await hre.ethers.getContractFactory("DistributorRole", getAccount());
     const RetailerRole = await hre.ethers.getContractFactory("RetailerRole", getAccount());
